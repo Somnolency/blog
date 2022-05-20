@@ -10,7 +10,7 @@
 
 'use strict';
 
-var precacheConfig = [];
+var precacheConfig = [["/2022/05/16/hello-world/index.html","3cc4cb8d8f52419a01f405bdb9197be6"],["/about/index.html","9c0dffa9720a61f198f56d4b64ac3833"],["/archives/2022/05/index.html","f940dff565d33d10e4af72e14ab6ebe7"],["/archives/2022/index.html","31ac84453feb783d73f715583373b2b7"],["/archives/index.html","84ddf53e2c1af2d93edd06f7da8707c0"],["/categories/index.html","a224db54bb6fa02ad0fe78324311e97f"],["/css/Readme.html","c1421c18e077ab9a9582161d9197e693"],["/css/first.css","dbc7e5311823f1b3ff12703980c8223b"],["/css/style.466f0d46.css","466f0d46497392d149ddccee57c69c98"],["/index.html","6fd117180afce814da502a78e1280f02"],["/js/app.fda82528.js","fda82528cd9405a52fcd5cd5e2db9d8b"],["/js/plugins/aplayer.js","dbe5eea968969672c52022ed895192a0"],["/js/plugins/parallax.8bf0ab10.js","8bf0ab10d50243ae87016af576642cdc"],["/js/plugins/rightMenu.d9437285.js","d9437285263079b1158df42384235b71"],["/js/plugins/rightMenus.cd02aa19.js","cd02aa1922d4d4eece59e4328c8b9686"],["/js/plugins/tags/contributors.aec80453.js","aec8045335d2753a39a48c34fb019662"],["/js/plugins/tags/friends.f372da57.js","f372da57b83083859f60ce19b736a695"],["/js/plugins/tags/sites.76bf19b8.js","76bf19b80414fbce774acddabf6b1d3e"],["/js/search/hexo.0e52f222.js","0e52f22209d509c1fb48fc490396c1de"],["/sw-register.js","e1c65b8448da228f1ca9193e8f09ede1"],["/tags/index.html","a8dcb3359cc537636d414565fe82431c"]];
 var cacheName = 'sw-precache-v3--' + (self.registration ? self.registration.scope : '');
 var firstRegister = 1; // 默认1是首次安装SW， 0是SW更新
 
