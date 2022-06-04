@@ -67,7 +67,7 @@ const VolantisApp = (() => {
   }
 
   fn.event = () => {
-    volantis.dom.$(document.getElementById("scroll-down")).on('click', function () {
+    volantis.dom.$(document.getElementById("scroll-down"))?.on('click', function () {
       fn.scrolltoElement(volantis.dom.bodyAnchor);
     });
 
@@ -437,36 +437,32 @@ const VolantisApp = (() => {
 
   // 工具类：复制字符串到剪切板
   fn.utilWriteClipText = (str) => {
-    try {
-      return navigator.clipboard
-        .writeText(str)
-        .then(() => {
-          return Promise.resolve()
-        })
-        .catch(err => {
-          return Promise.reject(err || '复制文本失败!')
-        })
-    } catch (e) {
-      const input = document.createElement('input');
-      input.setAttribute('readonly', 'readonly');
-      document.body.appendChild(input);
-      input.setAttribute('value', str);
-      input.select();
-      try {
-        let result = document.execCommand('copy')
-        document.body.removeChild(input);
-        if (!result || result === 'unsuccessful') {
-          return Promise.reject('复制文本失败!')
-        } else {
-          return Promise.resolve()
+    return navigator.clipboard
+      .writeText(str)
+      .then(() => {
+        return Promise.resolve()
+      })
+      .catch(e => {
+        const input = document.createElement('textarea');
+        input.setAttribute('readonly', 'readonly');
+        document.body.appendChild(input);
+        input.innerHTML = str;
+        input.select();
+        try {
+          let result = document.execCommand('copy')
+          document.body.removeChild(input);
+          if (!result || result === 'unsuccessful') {
+            return Promise.reject('复制文本失败!')
+          } else {
+            return Promise.resolve()
+          }
+        } catch (e) {
+          document.body.removeChild(input);
+          return Promise.reject(
+            '当前浏览器不支持复制功能，请检查更新或更换其他浏览器操作!'
+          )
         }
-      } catch (e) {
-        document.body.removeChild(input);
-        return Promise.reject(
-          '当前浏览器不支持复制功能，请检查更新或更换其他浏览器操作!'
-        )
-      }
-    }
+      })
   }
 
   // 工具类：返回时间间隔
@@ -1130,3 +1126,47 @@ const DOMController = {
   }
 }
 Object.freeze(DOMController);
+
+const VolantisRequest = {
+  timeoutFetch: (url, ms, requestInit) => {
+    const controller = new AbortController()
+    requestInit.signal?.addEventListener('abort', () => controller.abort())
+    let promise = fetch(url, { ...requestInit, signal: controller.signal })
+    if (ms > 0) {
+      const timer = setTimeout(() => controller.abort(), ms)
+      promise.finally(() => { clearTimeout(timer) })
+    }
+    promise = promise.catch((err) => {
+      throw ((err || {}).name === 'AbortError') ? new Error(`Fetch timeout: ${url}`) : err
+    })
+    return promise
+  },
+
+  Fetch: async (url, requestInit, timeout = 15000) => {
+    const resp = await VolantisRequest.timeoutFetch(url, timeout, requestInit);
+    if (!resp.ok) throw new Error(`Fetch error: ${url} | ${resp.status}`);
+    let json = await resp.json()
+    if (!json.success) throw json
+    return json
+  },
+
+  POST: async (url, data) => {
+    const requestInit = {
+      method: 'POST',
+    }
+    if (data) {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => formData.append(key, String(data[key])))
+      requestInit.body = formData;
+    }
+    const json = await VolantisRequest.Fetch(url, requestInit)
+    return json.data;
+  },
+
+  Get: async (url, data) => {
+    const json = await VolantisRequest.Fetch(url + (data ? (`?${new URLSearchParams(data)}`) : ''), {
+      method: 'GET'
+    })
+  }
+}
+Object.freeze(VolantisRequest);
