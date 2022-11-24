@@ -191,7 +191,7 @@ RightMenus.fun = (() => {
       _rightMenuWrapper.style.top = `${showTop}px`;
       if (volantis.GLOBAL_CONFIG.plugins.message.rightmenu.notice) fn.menuNotic();
     } catch (error) {
-      if (volantis.GLOBAL_CONFIG.debug) console.error(error);
+      console.error(error);
       fn.hideMenu();
       return true;
     }
@@ -316,7 +316,7 @@ RightMenus.fun = (() => {
     }
 
     // 判断是否显示音乐控制器
-    if (volantis.GLOBAL_CONFIG.plugins.aplayer.enable
+    if (volantis.GLOBAL_CONFIG.plugins.aplayer?.enable
       && typeof RightMenuAplayer !== 'undefined'
       && RightMenuAplayer.APlayer.player !== undefined) {
       if (rightMenuConfig.options.musicAlwaysShow
@@ -381,7 +381,7 @@ RightMenus.fun = (() => {
             fn[eventName]()
           }
         } catch (error) {
-          if (volantis.GLOBAL_CONFIG.debug) {
+          if (volantis.GLOBAL_CONFIG.debug === "rightMenus") {
             console.error({
               id: id,
               error: error,
@@ -576,6 +576,7 @@ RightMenus.fun = (() => {
       [document.querySelector('h1'), 'common_read_h1'], [document.querySelector('#post'), 'post_read'],
       [document.querySelector('#l_cover'), 'read_cover'], [document.querySelector('.widget.toc-wrapper'), 'post_read']
     ]);
+    DOMController.setStyle('.copyright.license', 'margin', '15px 0');
     volantis.isReadModel = volantis.isReadModel === undefined ? true : !volantis.isReadModel;
     if (volantis.isReadModel) {
       if (RightMenus.messageRightMenu) VolantisApp.message('系统提示', '阅读模式已开启，您可以点击屏幕空白处退出。', {
@@ -593,7 +594,8 @@ RightMenus.fun = (() => {
     } else {
       document.querySelector('#l_body').removeEventListener('click', fn.readMode);
       document.querySelector('#post').removeEventListener('click', fn.readMode);
-      document.querySelector('.prev-next').style.display = 'flex'; // 单独修改
+      DOMController.setStyle('.prev-next', 'display', 'flex');
+      DOMController.setStyle('.copyright.license', 'margin', '15px -40px');
     }
   }
 
